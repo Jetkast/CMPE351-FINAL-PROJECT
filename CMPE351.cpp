@@ -1,6 +1,15 @@
 #include <iostream>
+#include <iterator>
+#include<algorithm>
+#include <getopt.h>
+#include <iomanip>
 using namespace std;
 
+struct processData {
+	int burst_time;
+	int arrival_time;
+	int priority;
+};
 
 char *file_input=NULL;
 char *file_output=NULL;
