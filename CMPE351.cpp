@@ -12,6 +12,8 @@ struct processData {
 	int burst_time;
 	int arrival_time;
 	int priority;
+	int execution_time;
+	int exectution_end;
 	int in_queue;
 };
 
@@ -26,7 +28,29 @@ void addProcessToQ(processData *scProcesses, int etime, int nbreline){
 	}
 }
 
+void processExecution(processData *eProcesses, int eProcessTE, int nbreline){
+	int counter=0; 
+	//cout<<"executionProcess start\n";
+	for(int i=0; i<nbreline; i++){
+		
+		if (i==eProcessTE && eProcesses[i].execution_end==0){
+			eProcesses[i].burst_time=eProcesses[i].burst_time-1;
+			//cout<<eProcesses[i].burst_time<<"Process \n";
+			if(eProcesses[i].burst_time==0){
+					eProcesses[i].execution_end=1;
+			}
+			//cout<<eProcesses[i].execution_end<<"End \n";
+		}else if(eProcesses[i].in_queue==1 && eProcesses[i].execution_end==0){
+			eProcesses[i].execution_time=eProcesses[i].execution_time+1;
+			//cout<<eProcesses[i].execution_time<<"Waiting \n";
+		}else{
+			
+		}
+		
+		counter++;
+	}
 
+}
 
 
 }
