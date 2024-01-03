@@ -128,10 +128,28 @@ int main (int argc, char *argv[]){
 			cin>>selectScheduling;
 			
 			switch (selectScheduling){
-				case 1 ://Implement the first fonction 
+				case 1 ://No method
+				 cout<<"None: none of scheduling method chosen\n";
 				break; 
 				
-				case 2 ://Implement the second fonction 
+				case 2 ://First C First S 
+				bool checkEnd=true;
+						int time=0;
+						cout<<"schedulingPreemptive start\n";
+						while(checkEnd==true){
+							addProcessToQ(allProcesses, time, lineNbre);
+							int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
+							if(processesToExecute==-1){
+								checkEnd=false;
+							}
+							else{
+								processExecution(allProcesses, processesToExecute, lineNbre);
+								time++;
+							}
+							
+						}
+						cout<<"Scheduling Finish\n";
+						cout<<time<<"time\n";
 				break;
 				
 				case 3 ://Implement the third fonction 
