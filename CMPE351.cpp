@@ -12,8 +12,24 @@ struct processData {
 	int burst_time;
 	int arrival_time;
 	int priority;
+	int in_queue;
 };
 
+void addProcessToQ(processData *scProcesses, int etime, int nbreline){
+	for(int i=0; i<nbreline; i++){
+	//	cout<<scProcesses[i].processus[0]<<"\n";
+		int *process = scProcesses[i];
+		if(scProcesses[i].in_queue==0 && scProcesses[i].arrival_time==etime){
+			scProcesses[i].in_queue=1;
+			
+		}
+	}
+}
+
+
+
+
+}
 char *file_input=NULL;
 char *file_output=NULL;
   
