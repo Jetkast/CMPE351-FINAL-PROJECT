@@ -1,8 +1,11 @@
+#include <vector>
 #include <iostream>
 #include <iterator>
 #include<algorithm>
 #include <getopt.h>
 #include <iomanip>
+#include <fstream>
+#include <string>
 using namespace std;
 
 struct processData {
@@ -38,7 +41,28 @@ int main (int argc, char *argv[]){
 		cout<<"use the parameter f for input and o for output";
 		exit(0);
 	}
-	
+	int lineNbre=0;
+	vector<processData> fileData{};
+
+	std::ifstream file(file_input);
+	std::string str;
+	while(std::getline(file, str)){
+		vector<string> lineInfo{};
+		string delimiter=":";
+
+		int pos;
+		string lineText=str;
+		
+		while((pos = lineText.find(delimiter))!= string::npos){
+			lineInfo.push_back(lineText.substr(0, pos));
+			lineText.erase(0, pos+delimiter.length());
+		}
+		
+		
+		processData infoOfLine={{stoi(lineInfo[0]),stoi(lineInfo[1]),stoi(lineText)}};
+		fileData.push_back(infoOfLine);
+		lineNbre++;
+	}
 	
 	while (true){
 		
