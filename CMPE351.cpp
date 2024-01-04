@@ -180,10 +180,7 @@ int main (int argc, char *argv[]){
 						cout<<time<<"time\n";
 				break;
 				
-				case 3 ://Implement the third fonction 
-				break;
-				
-				case 4 ://Implement the forth fonction
+				case 3 ://Implement the third fonction
 				cout<<"Shortest-Job-First Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
@@ -201,7 +198,11 @@ int main (int argc, char *argv[]){
 							
 						}
 						cout<<"Scheduling Finish\n";
-						cout<<time<<"time\n"; 
+						cout<<time<<"time\n";  
+				break;
+				
+				case 4 ://Implement the forth fonction
+				
 				break;
 				
 				case 5 ://Implement the fifth fonction 
