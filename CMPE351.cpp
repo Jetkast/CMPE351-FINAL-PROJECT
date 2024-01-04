@@ -23,7 +23,7 @@ void addProcessToQ(processData *scProcesses, int etime, int nbreline){
 		int *process = scProcesses[i];
 		if(scProcesses[i].in_queue==0 && scProcesses[i].arrival_time==etime){
 			scProcesses[i].in_queue=1;
-			
+			//cout<<i<<" In queue \n";
 		}
 	}
 }
@@ -124,6 +124,12 @@ int main (int argc, char *argv[]){
 		processData infoOfLine={{stoi(lineInfo[0]),stoi(lineInfo[1]),stoi(lineText)}};
 		fileData.push_back(infoOfLine);
 		lineNbre++;
+	}
+		processData allProcesses[lineNbre];
+	int j=0;
+	for(const auto &ar: fileData){
+		allProcesses[j]=ar;
+		j++;
 	}
 	
 	while (true){
