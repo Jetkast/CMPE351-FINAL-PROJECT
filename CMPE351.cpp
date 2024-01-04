@@ -51,7 +51,29 @@ void processExecution(processData *eProcesses, int eProcessTE, int nbreline){
 	}
 
 }
+int processChoiceSelection(processData *scProcesses, int type, int nbreline){
+	int processSelected =-1;
+	int lowestProcess = 0;
+	int counter=0;
+	bool boolProcessSelected =false;
+	//cout<<"schedulingProcessChoice start\n";
+	//cout<<sizeof(scProcesses)<<"\n";
+	for(int i=0; i<nbreline; i++){
+	//	cout<<scProcesses[i].processus[0]<<"\n";
 
+		
+		if((boolProcessSelected==false && scProcesses[i].in_queue==1 && scProcesses[i].execution_end==0) || 
+			(boolProcessSelected==true && scProcesses[i].in_queue==1 && scProcesses[i].execution_end==0 && scProcesses[i][type]<lowestProcess))
+		{
+				lowestProcess=scProcesses[i][type];
+				processSelected=counter;
+				boolProcessSelected=true;
+		}
+		counter++;
+	}
+	//cout<<processSelected<<"selected \n";
+	return processSelected;
+}
 
 }
 char *file_input=NULL;
