@@ -284,8 +284,31 @@ int main (int argc, char *argv[]){
 				cout<<"Average :"<<average<<"ms \n"; 
 			break;
 			
-			case 4 : cout<<"Exit the program";
-			return 0 ;
+			case 4 : 
+			cout<<"Exit the program";
+			cout<<"Exit Program, Thank you  \n";
+				float averages;
+					int sum=0;
+                	for(int i=0; i<lineNbre; i++){
+		               sum=sum+allProcesses[i].execution_time;
+	                }
+	            averages = (sum/lineNbre);
+		
+				ofstream file;
+				file.open(file_output);
+									  
+				file<<"Processes waiting Time \n";
+				for(int i=0; i<lineNbre; i++){
+					file<<"P"<<i+1<<": "<<allProcesses[i].execution_time<<"ms \n";
+				}
+
+				file<<"Average :"<< averages <<"ms \n";
+
+						
+				file.close();	
+				 	
+					
+				finish=true;
 			break;
 			
 			default : cout<<"Select one of this ";
