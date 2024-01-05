@@ -201,7 +201,7 @@ int main (int argc, char *argv[]){
 						cout<<time<<"time\n";  
 				break;
 				
-				case 4 ://Implement the forth fonction
+				case 4 :
 				cout<<"Priority Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
@@ -223,7 +223,40 @@ int main (int argc, char *argv[]){
 						break;
 				break;
 				
-				case 5 ://Implement the fifth fonction 
+				case 5 :
+				 cout<<"Round-Robin Scheduling\n";
+						cout<<"Insert Quantum\n";
+						int quantum;
+						cin>>quantum;
+							bool checkEnd=true;
+							int time=0;
+							cout<<"schedulingRoundRobin start\n";
+							addProcessToQ(pProcesses, time, lineNbre);
+							int processListSize=lineNbre;
+							int currentProcess=0;
+							while(checkEnd==true){
+								for(int i=0; i<quantum; i++){
+									int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
+								
+									if(processesToExecute==-1){
+										checkEnd=false;
+										break;
+									}
+									else if(allProcesses[currentProcess].exectution_end==1){
+										break;
+									}
+									else{
+										processExecution(allProcesses, currentProcess, lineNbre);
+										addProcessToQ(pProcesses, time, lineNbre);
+										time++;
+									}
+									
+								}
+								currentProcess++;
+								if(currentProcess==processListSize){
+									currentProcess=0;
+								}
+							}
 				break;
 				
 				default:cout<<"Make a good choice";
