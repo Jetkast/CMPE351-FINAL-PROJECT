@@ -202,7 +202,25 @@ int main (int argc, char *argv[]){
 				break;
 				
 				case 4 ://Implement the forth fonction
-				
+				cout<<"Priority Scheduling\n";
+						bool checkEnd=true;
+						int time=0;
+						cout<<"schedulingPreemptive start\n";
+						while(checkEnd==true){
+							addProcessToQ(allProcesses, time, lineNbre);
+							int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
+							if(processesToExecute==-1){
+								checkEnd=false;
+							}
+							else{
+								processExecution(allProcesses, processesToExecute, lineNbre);
+								time++;
+							}
+							
+						}
+						cout<<"Scheduling Finish\n";
+						cout<<time<<"time\n";
+						break;
 				break;
 				
 				case 5 ://Implement the fifth fonction 
