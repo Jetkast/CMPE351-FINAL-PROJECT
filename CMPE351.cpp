@@ -267,7 +267,21 @@ int main (int argc, char *argv[]){
 			case 2 : //Preemptive mode
 			break;
 			
-			case 3 : //Show result 
+			case 3 : 
+			cout<<"The Result is:\n";
+				cout<<"Processes waiting Time \n";
+				float average;
+					int sum=0;
+                	for(int i=0; i<lineNbre; i++){
+		               sum=sum+allProcesses[i].execution_time;
+	                }
+	            average = (sum/lineNbre);
+
+	           for(int i=0; i<lineNbre; i++){
+		            cout<<"P"<<i+1<<": "<<allProcesses[i].execution_time<<"ms \n";
+	            }
+	            
+				cout<<"Average :"<<average<<"ms \n"; 
 			break;
 			
 			case 4 : cout<<"Exit the program";
