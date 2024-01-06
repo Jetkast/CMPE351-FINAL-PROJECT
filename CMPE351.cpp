@@ -75,7 +75,6 @@ int processChoiceSelection(processData *scProcesses, int type, int nbreline){
 	return processSelected;
 }
 
-}
 char *file_input=NULL;
 char *file_output=NULL;
   
@@ -103,6 +102,8 @@ int main (int argc, char *argv[]){
 		cout<<"use the parameter f for input and o for output";
 		exit(0);
 	}
+	
+	
 	int lineNbre=0;
 	vector<processData> fileData{};
 
@@ -161,6 +162,7 @@ int main (int argc, char *argv[]){
 				break; 
 				
 				case 2 ://First C First S 
+				cout<<"First Come , First Served Scheduling\n";
 				bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
@@ -265,8 +267,21 @@ int main (int argc, char *argv[]){
 			break;
 			
 			case 2 : //Preemptive mode
+			{
+				int nonPreemptiveSchedulingType;
+				cout<<"Choose Between the five Scheduling Non Preemptinve Type \n";
+				cout<<"1. None\n";
+				cout<<"2. First Come, First Served Scheduling\n";
+				cout<<"3. Shortest-Job-First Scheduling\n";
+				cout<<"4. Priority Scheduling\n";
+				cin>>nonPreemptiveSchedulingType;
+				switch(nonPreemptiveSchedulingType){
+					case 1:
+						cout<<"None Scheduling method choosen try again \n";
 			break;
-			
+		}
+		
+	}
 			case 3 : 
 			cout<<"The Result is:\n";
 				cout<<"Processes waiting Time \n";
