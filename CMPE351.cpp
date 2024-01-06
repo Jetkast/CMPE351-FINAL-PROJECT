@@ -279,6 +279,55 @@ int main (int argc, char *argv[]){
 					case 1:
 						cout<<"None Scheduling method choosen try again \n";
 			break;
+					case 2:
+						cout<<"First Come, First Served Scheduling\n";
+						
+							bool checkEnd=true;
+	                        int time=0;
+	                        cout<<"schedulingNonPreemptive start\n";
+	                        insertInqueue(allProcesses, time,lineNbre);
+	                        while(checkEnd==true){
+		                    	int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
+			  					if(processesToExecute==-1){
+									checkEnd=false;
+								}
+								else{
+									while(allProcesses[processToExecute].exectution_end==0){
+										processExecution(allProcesses, processesToExecute, lineNbre);
+										time++;
+										addProcessToQ(allProcesses, time, lineNbre);
+									}
+									
+								}
+							}
+						cout<<"Scheduling Finish\n";
+						cout<<time<<"time\n";			
+						
+			break;
+					case 3:
+						cout<<"Shortest-Job-First Scheduling\n";
+						
+						bool checkEnd=true;
+	                        int time=0;
+	                        cout<<"schedulingNonPreemptive start\n";
+	                        insertInqueue(allProcesses, time,lineNbre);
+	                        while(checkEnd==true){
+		                    	int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
+			  					if(processesToExecute==-1){
+									checkEnd=false;
+								}
+								else{
+									while(allProcesses[processToExecute].exectution_end==0){
+										processExecution(allProcesses, processesToExecute, lineNbre);
+										time++;
+										addProcessToQ(allProcesses, time, lineNbre);
+									}
+									
+								}
+							}
+						cout<<"Scheduling Finish\n";
+						cout<<time<<"time\n";
+						break;
 		}
 		
 	}
