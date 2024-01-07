@@ -328,6 +328,39 @@ int main (int argc, char *argv[]){
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
+						
+				case 4:
+						cout<<"Priority Scheduling\n";
+						
+						bool checkEnd=true;
+	                        int time=0;
+	                        cout<<"schedulingNonPreemptive start\n";
+	                        insertInqueue(allProcesses, time,lineNbre);
+	                        while(checkEnd==true){
+		                    	int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
+			  					if(processesToExecute==-1){
+									checkEnd=false;
+								}
+								else{
+									while(allProcesses[processToExecute].exectution_end==0){
+										processExecution(allProcesses, processesToExecute, lineNbre);
+										time++;
+										addProcessToQ(allProcesses, time, lineNbre);
+									}
+									
+								}
+							}
+						cout<<"Scheduling Finish\n";
+						cout<<time<<"time\n";
+						break;
+					default:
+						cout<<"you have to choose between 1 - 4";
+					break;
+				}
+				
+			}	
+						
+						
 		}
 		
 	}
@@ -377,6 +410,7 @@ int main (int argc, char *argv[]){
 			
 			default : cout<<"Select one of this ";
 			break;
+			
 			
 			
 		}
