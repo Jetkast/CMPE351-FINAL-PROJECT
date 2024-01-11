@@ -1,4 +1,4 @@
-#include <vector>
+#include <list>
 #include <iostream>
 #include <iterator>
 #include<algorithm>
@@ -17,66 +17,76 @@ struct processData {
 	int in_queue;
 };
 
-void addProcessToQ(processData *scProcesses, int etime, int nbreline){
-	for(int i=0; i<nbreline; i++){
-	//	cout<<scProcesses[i].processus[0]<<"\n";
-		int *process = scProcesses[i];
-		if(scProcesses[i].in_queue==0 && scProcesses[i].arrival_time==etime){
-			scProcesses[i].in_queue=1;
-			//cout<<i<<" In queue \n";
-		}
-	}
+
+list<processData> addProcessToQ(list<processData> scProcesses, int etime, int nbreline) {
+    list<processData> scNewProcesses{};
+    for (auto it = scProcesses.begin(); it != scProcesses.end(); ++it) {
+        processData localProcess = *it;
+        if (localProcess.in_queue == 0 && localProcess.arrival_time == etime) {
+            localProcess.in_queue = 1;
+        }
+        scNewProcesses.push_back(localProcess);
+    }
+
+    return scNewProcesses;
 }
 
-void processExecution(processData *eProcesses, int eProcessTE, int nbreline){
-	int counter=0; 
-	//cout<<"executionProcess start\n";
-	for(int i=0; i<nbreline; i++){
-		
-		if (i==eProcessTE && eProcesses[i].execution_end==0){
-			eProcesses[i].burst_time=eProcesses[i].burst_time-1;
-			//cout<<eProcesses[i].burst_time<<"Process \n";
-			if(eProcesses[i].burst_time==0){
-					eProcesses[i].execution_end=1;
-			}
-			//cout<<eProcesses[i].execution_end<<"End \n";
-		}else if(eProcesses[i].in_queue==1 && eProcesses[i].execution_end==0){
-			eProcesses[i].execution_time=eProcesses[i].execution_time+1;
-			//cout<<eProcesses[i].execution_time<<"Waiting \n";
-		}else{
-			
-		}
-		
-		counter++;
-	}
 
+list<processData> processExecution(list<processData> eProcesses, int eProcessTE, int nbreline) {
+    list<processData> scNewProcesses{};
+    int index = 0;
+    for (auto it = eProcesses.begin(); it != eProcesses.end(); ++it) {
+        processData localProcessPE = *it;
+
+        if (index == eProcessTE && localProcessPE.execution_end == 0) {
+            localProcessPE.burst_time = localProcessPE.burst_time - 1;
+            if (localProcessPE.burst_time == 0) {
+                localProcessPE.execution_end = 1;
+            }
+        } else if (localProcessPE.in_queue == 1 && localProcessPE.execution_end == 0) {
+            localProcessPE.execution_time = localProcessPE.execution_time + 1;
+        }
+        scNewProcesses.push_back(localProcessPE);
+        index++;
+    }
+
+    return scNewProcesses;
 }
-int processChoiceSelection(processData *scProcesses, int type, int nbreline){
-	int processSelected =-1;
+int processChoiceSelection(list<processData> scProcesses, int type, int nbreline){
+	int processSelected = -1;
 	int lowestProcess = 0;
 	int counter=0;
-	bool boolProcessSelected =false;
-	//cout<<"schedulingProcessChoice start\n";
-	//cout<<sizeof(scProcesses)<<"\n";
-	for(int i=0; i<nbreline; i++){
-	//	cout<<scProcesses[i].processus[0]<<"\n";
+	bool boolProcessSelected = false;
+	int selectCriteria;
+	
+	 for (auto it = scProcesses.begin(); it != scProcesses.end(); ++it) {
+        processData localProcessPC = *it;
+
+        if (type == 0) {
+            selectCriteria = localProcessPC.burst_time;
+        } else if (type == 1) {
+            selectCriteria = localProcessPC.arrival_time;
+        } else {
+            selectCriteria = localProcessPC.priority;
+        }
+
 
 		
-		if((boolProcessSelected==false && scProcesses[i].in_queue==1 && scProcesses[i].execution_end==0) || 
-			(boolProcessSelected==true && scProcesses[i].in_queue==1 && scProcesses[i].execution_end==0 && scProcesses[i][type]<lowestProcess))
+		if((boolProcessSelected==false && localProcessPC.in_queue==1 && localProcessPC.execution_end==0) || 
+			(boolProcessSelected==true && localProcessPC.in_queue==1 && localProcessPC.execution_end==0 && selectCriteria<lowestProcess))
 		{
-				lowestProcess=scProcesses[i][type];
+				lowestProcess=selectCriteria;
 				processSelected=counter;
 				boolProcessSelected=true;
 		}
 		counter++;
 	}
-	//cout<<processSelected<<"selected \n";
+	
 	return processSelected;
 }
 
-char *file_input=NULL;
-char *file_output=NULL;
+char *file_input=nullptr;
+char *file_output=nullptr;
   
 int main (int argc, char *argv[]){
     int file_count;
@@ -98,19 +108,19 @@ int main (int argc, char *argv[]){
 				break;
 		}
 	}
-	if(file_input==NULL || file_output==NULL){
+	if(file_input==nullptr || file_output==nullptr){
 		cout<<"use the parameter f for input and o for output";
 		exit(0);
 	}
 	
 	
 	int lineNbre=0;
-	vector<processData> fileData{};
+	list<processData> fileData{};
 
-	std::ifstream file(file_input);
-	std::string str;
-	while(std::getline(file, str)){
-		vector<string> lineInfo{};
+	ifstream file(file_input);
+	string str;
+	while(getline(file, str)){
+		list<string> lineInfo{};
 		string delimiter=":";
 
 		int pos;
@@ -122,79 +132,79 @@ int main (int argc, char *argv[]){
 		}
 		
 		
-		processData infoOfLine={{stoi(lineInfo[0]),stoi(lineInfo[1]),stoi(lineText)}};
+		processData infoOfLine{{stoi(lineInfo.front()),stoi(lineInfo.back()),stoi(lineText), 0, 0, 0};
 		fileData.push_back(infoOfLine);
 		lineNbre++;
 	}
-		processData allProcesses[lineNbre];
-	int j=0;
-	for(const auto &ar: fileData){
-		allProcesses[j]=ar;
-		j++;
-	}
+	
+	list<processData> allProcesses(fileData.begin(), fileData.end());
+	
 	
 	while (true){
 		
 		int Select;
 		
-		cout<<"Cpu scheduler similator";
-		cout<<"1. Scheduling method";
-		cout<<"2. Preemptive mode";
-		cout<<"3. Show result";
-		cout<<"4. End program";
+		cout<<"Cpu scheduler similator" << endl;
+		cout<<"1. Scheduling method" << endl;
+		cout<<"2. Preemptive mode" <<endl;
+		cout<<"3. Show result" <<endl;
+		cout<<"4. End program" <<endl;
 		cout<<"Option > ";
 		cin>>Select;
 		
 		switch (Select){
 			case 1 : int selectScheduling;
-			cout<<"Choose the method";
-			cout<<"1. None method Scheduling";
-			cout<<"2. First came , First served Scheduling";
-			cout<<"3. Short Test Job First Scheduling";
-			cout<<"4. Priority Scheduling";
-			cout<<"5. Round Robin";
-			cout<<"Option > ";
+			cout<<"Choose the method" <<endl;
+			cout<<"1. None method Scheduling" <<endl;
+			cout<<"2. First came , First served Scheduling" <<endl;
+			cout<<"3. Short Test Job First Scheduling" <<endl;
+			cout<<"4. Priority Scheduling" <<endl;
+			cout<<"5. Round Robin" << endl;
+			cout<<"Option > " <<endl;
 			cin>>selectScheduling;
 			
 			switch (selectScheduling){
-				case 1 ://No method
+				case 1 :
 				 cout<<"None: none of scheduling method chosen\n";
 				break; 
 				
-				case 2 ://First C First S 
+				case 2 : {
 				cout<<"First Come , First Served Scheduling\n";
 				bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
 						while(checkEnd==true){
-							addProcessToQ(allProcesses, time, lineNbre);
+							cout << "in while"\n;
+							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+							
 							int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
 							}
 							else{
-								processExecution(allProcesses, processesToExecute, lineNbre);
+								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 								time++;
 							}
 							
 						}
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
-				break;
-				
-				case 3 ://Implement the third fonction
+				break;	
+			}
+			
+				case 3 :{
 				cout<<"Shortest-Job-First Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
 						while(checkEnd==true){
-							addProcessToQ(allProcesses, time, lineNbre);
+							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
 							int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
 							}
 							else{
-								processExecution(allProcesses, processesToExecute, lineNbre);
+								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 								time++;
 							}
 							
@@ -202,20 +212,21 @@ int main (int argc, char *argv[]){
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";  
 				break;
-				
-				case 4 :
+			}
+			
+				case 4 :{
 				cout<<"Priority Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
 						while(checkEnd==true){
-							addProcessToQ(allProcesses, time, lineNbre);
+							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
 							int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
 							}
 							else{
-								processExecution(allProcesses, processesToExecute, lineNbre);
+								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 								time++;
 							}
 							
@@ -223,17 +234,17 @@ int main (int argc, char *argv[]){
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
-				break;
+					}
 				
-				case 5 :
-				 cout<<"Round-Robin Scheduling\n";
+				case 5 :{
+					 cout<<"Round-Robin Scheduling\n";
 						cout<<"Insert Quantum\n";
 						int quantum;
 						cin>>quantum;
 							bool checkEnd=true;
 							int time=0;
 							cout<<"schedulingRoundRobin start\n";
-							addProcessToQ(pProcesses, time, lineNbre);
+							allProcesses = addProcessToQ(pProcesses, time, lineNbre);
 							int processListSize=lineNbre;
 							int currentProcess=0;
 							while(checkEnd==true){
@@ -248,8 +259,8 @@ int main (int argc, char *argv[]){
 										break;
 									}
 									else{
-										processExecution(allProcesses, currentProcess, lineNbre);
-										addProcessToQ(pProcesses, time, lineNbre);
+										allProcesses = processExecution(allProcesses, currentProcess, lineNbre);
+										addProcessToQ(allProcesses, time, lineNbre);
 										time++;
 									}
 									
@@ -266,7 +277,7 @@ int main (int argc, char *argv[]){
 			}
 			break;
 			
-			case 2 : //Preemptive mode
+			case 2 : 
 			{
 				int nonPreemptiveSchedulingType;
 				cout<<"Choose Between the five Scheduling Non Preemptinve Type \n";
@@ -279,48 +290,52 @@ int main (int argc, char *argv[]){
 					case 1:
 						cout<<"None Scheduling method choosen try again \n";
 			break;
-					case 2:
+					case 2:{
 						cout<<"First Come, First Served Scheduling\n";
 						
 							bool checkEnd=true;
 	                        int time=0;
 	                        cout<<"schedulingNonPreemptive start\n";
-	                        insertInqueue(allProcesses, time,lineNbre);
+	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
 	                        while(checkEnd==true){
+	                        	cout << "in while Preemp\n";
 		                    	int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
 			  					if(processesToExecute==-1){
 									checkEnd=false;
 								}
 								else{
-									while(allProcesses[processToExecute].exectution_end==0){
-										processExecution(allProcesses, processesToExecute, lineNbre);
+									while(allProcesses.front().exectution_end==0){
+										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										addProcessToQ(allProcesses, time, lineNbre);
+										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
 									}
 									
 								}
 							}
 						cout<<"Scheduling Finish\n";
-						cout<<time<<"time\n";			
+						cout<<time<<"time\n";
+						break;
 						
-			break;
-					case 3:
+					}
+						
+			
+					case 3:{
 						cout<<"Shortest-Job-First Scheduling\n";
 						
 						bool checkEnd=true;
 	                        int time=0;
 	                        cout<<"schedulingNonPreemptive start\n";
-	                        insertInqueue(allProcesses, time,lineNbre);
+	                        allProcesses = addProcessToQ (allProcesses, time,lineNbre);
 	                        while(checkEnd==true){
 		                    	int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
 			  					if(processesToExecute==-1){
 									checkEnd=false;
 								}
 								else{
-									while(allProcesses[processToExecute].exectution_end==0){
-										processExecution(allProcesses, processesToExecute, lineNbre);
+									while(allProcesses.front().exectution_end==0){
+										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										addProcessToQ(allProcesses, time, lineNbre);
+										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
 									}
 									
 								}
@@ -328,24 +343,25 @@ int main (int argc, char *argv[]){
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
+					}
 						
-				case 4:
+				case 4:{
 						cout<<"Priority Scheduling\n";
 						
 						bool checkEnd=true;
 	                        int time=0;
 	                        cout<<"schedulingNonPreemptive start\n";
-	                        insertInqueue(allProcesses, time,lineNbre);
+	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
 	                        while(checkEnd==true){
 		                    	int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
 			  					if(processesToExecute==-1){
 									checkEnd=false;
 								}
 								else{
-									while(allProcesses[processToExecute].exectution_end==0){
-										processExecution(allProcesses, processesToExecute, lineNbre);
+									while(allProcesses.front().exectution_end==0){
+										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										addProcessToQ(allProcesses, time, lineNbre);
+										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
 									}
 									
 								}
@@ -353,13 +369,14 @@ int main (int argc, char *argv[]){
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
+					}
 					default:
 						cout<<"you have to choose between 1 - 4";
 					break;
 				}
 				
 			}	
-						
+			break;				
 						
 		}
 		
@@ -369,25 +386,26 @@ int main (int argc, char *argv[]){
 				cout<<"Processes waiting Time \n";
 				float average;
 					int sum=0;
-                	for(int i=0; i<lineNbre; i++){
-		               sum=sum+allProcesses[i].execution_time;
+                	for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    sum = sum + it->execution_time;
 	                }
 	            average = (sum/lineNbre);
 
-	           for(int i=0; i<lineNbre; i++){
-		            cout<<"P"<<i+1<<": "<<allProcesses[i].execution_time<<"ms \n";
+	           for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    cout << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
 	            }
 	            
 				cout<<"Average :"<<average<<"ms \n"; 
 			break;
-			
-			case 4 : 
+		}
+		
+			case 4 : {
 			cout<<"Exit the program";
 			cout<<"Exit Program, Thank you  \n";
 				float averages;
 					int sum=0;
-                	for(int i=0; i<lineNbre; i++){
-		               sum=sum+allProcesses[i].execution_time;
+                	for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    sum = sum + it->execution_time;
 	                }
 	            averages = (sum/lineNbre);
 		
@@ -395,9 +413,9 @@ int main (int argc, char *argv[]){
 				file.open(file_output);
 									  
 				file<<"Processes waiting Time \n";
-				for(int i=0; i<lineNbre; i++){
-					file<<"P"<<i+1<<": "<<allProcesses[i].execution_time<<"ms \n";
-				}
+				 for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    file << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
+                }
 
 				file<<"Average :"<< averages <<"ms \n";
 
@@ -405,15 +423,17 @@ int main (int argc, char *argv[]){
 				file.close();	
 				 	
 					
-				finish=true;
+				
 			break;
+			// return 0;
+			}
 			
-			default : cout<<"Select one of this ";
-			break;
+			default : 
+				cout<<"Select one of this ";
+				break;
 			
 			
 			
 		}
 	}
-	return 0;
-}
+
