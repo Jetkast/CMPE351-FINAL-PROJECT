@@ -15,6 +15,7 @@ struct processData {
 	int execution_time;
 	int exectution_end;
 	int in_queue;
+	int position;
 };
 
 
@@ -115,6 +116,7 @@ int main (int argc, char *argv[]){
 	
 	
 	int lineNbre=0;
+	int p=0;
 	list<processData> fileData{};
 
 	ifstream file(file_input);
@@ -173,23 +175,37 @@ int main (int argc, char *argv[]){
 				bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
-						while(checkEnd==true){
-							cout << "in while"\n;
-							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
-							
-							int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
+						allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+							while (checkEnd == true){
+								cout <<"in while non Preemp"\n;							
+								int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
 							}
 							else{
-								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
-								time++;
+								auto iterag = allProcesses.begin();
+				    std::advance(iterag, processesToExecute);
+				    processData localProcessPCE = *iterag;
+				    int ff=0;
+				    list<processData> scNewProcessesE(allProcesses.begin(), allProcesses.end());
+                                while (localProcessPCE.execution_end == 0 && ff<1) {
+                                    scNewProcessesE = processExecution(scNewProcessesE, processesToExecute, lineNbre);
+                                    auto iterags = scNewProcessesE.begin();
+				    std::advance(iterags, processesToExecute);
+				    processData localProcessPCESSS = *iterags;
+                                    time++;
+                                    scNewProcessesE = addProcessToQ(scNewProcessesE, time, lineNbre);
+                                    if(localProcessPCESSS.execution_end == 1){
+                                    	ff++;
+                                    	allProcesses = scNewProcessesE;
 							}
 							
 						}
+					}
+				}
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
-				break;	
+						break;	
 			}
 			
 				case 3 :{
@@ -197,18 +213,33 @@ int main (int argc, char *argv[]){
 						bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
-						while(checkEnd==true){
 							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+							while(checkEnd==true){
 							int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
-							if(processesToExecute==-1){
+							if(processesToExecute == -1){
 								checkEnd=false;
 							}
 							else{
-								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
-								time++;
+								auto iterag = allProcesses.begin();
+				    std::advance(iterag, processesToExecute);
+				    processData localProcessPCE = *iterag;
+				    int ff=0;
+				    list<processData> scNewProcessesE(allProcesses.begin(), allProcesses.end());
+                                while (localProcessPCE.execution_end == 0 && ff<1) {
+                                    scNewProcessesE = processExecution(scNewProcessesE, processesToExecute, lineNbre);
+                                    auto iterags = scNewProcessesE.begin();
+				    std::advance(iterags, processesToExecute);
+				    processData localProcessPCESSS = *iterags;
+                                    time++;
+                                    scNewProcessesE = addProcessToQ(scNewProcessesE, time, lineNbre);
+                                    if(localProcessPCESSS.execution_end == 1){
+                                    	ff++;
+                                    	allProcesses = scNewProcessesE;
 							}
 							
 						}
+					}
+				}
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";  
 				break;
@@ -219,18 +250,34 @@ int main (int argc, char *argv[]){
 						bool checkEnd=true;
 						int time=0;
 						cout<<"schedulingPreemptive start\n";
-						while(checkEnd==true){
 							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+							while(checkEnd == true){
 							int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
 							}
 							else{
-								allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
-								time++;
+								
+                                auto iterag = allProcesses.begin();
+				    std::advance(iterag, processesToExecute);
+				    processData localProcessPCE = *iterag;
+				    int ff=0;
+				    list<processData> scNewProcessesE(allProcesses.begin(), allProcesses.end());
+                                while (localProcessPCE.execution_end == 0 && ff<1) {
+                                    scNewProcessesE = processExecution(scNewProcessesE, processesToExecute, lineNbre);
+                                    auto iterags = scNewProcessesE.begin();
+				    std::advance(iterags, processesToExecute);
+				    processData localProcessPCESSS = *iterags;
+                                    time++;
+                                    scNewProcessesE = addProcessToQ(scNewProcessesE, time, lineNbre);
+                                    if(localProcessPCESSS.execution_end == 1){
+                                    	ff++;
+                                    	allProcesses = scNewProcessesE;
+                                    }
 							}
 							
 						}
+					}
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
@@ -242,51 +289,65 @@ int main (int argc, char *argv[]){
 						int quantum;
 						cin>>quantum;
 							bool checkEnd=true;
-							int time=0;
+							int time = 0;
 							cout<<"schedulingRoundRobin start\n";
 							allProcesses = addProcessToQ(pProcesses, time, lineNbre);
 							int processListSize=lineNbre;
 							int currentProcess=0;
+							int processesToExecute = processChoiceSelection(allProcesses, 1, lineNbre);
 							while(checkEnd==true){
+								cout <<"Round Robin start\n";
 								for(int i=0; i<quantum; i++){
 									int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
 								
-									if(processesToExecute==-1){
+									if(processesToExecute == -1){
 										checkEnd=false;
 										break;
 									}
-									else if(allProcesses[currentProcess].exectution_end==1){
-										break;
+									else {
+												auto iterag = allProcesses.begin();
+									std::advance(iterag, currentProcess);
+									processData localProcessPCE = *iterag;
+									list<processData> scNewProcessesE(allProcesses.begin(), allProcesses.end());
+
+									if (localProcessPCE.execution_end == 1) {
+											break;
 									}
 									else{
-										allProcesses = processExecution(allProcesses, currentProcess, lineNbre);
-										addProcessToQ(allProcesses, time, lineNbre);
+										scNewProcessesE = processExecution(scNewProcessesE, currentProcess, lineNbre);
+										auto iterags = scNewProcessesE.begin();
+										std::advance(iterags, currentProcess);
+										processData localProcessPCESSS = *iterags;
 										time++;
+										scNewProcessesE = addProcessToQ(scNewProcessesE, time, lineNbre);
+										allProcesses = scNewProcessesE;
 									}
 									
 								}
+							}
 								currentProcess++;
-								if(currentProcess==processListSize){
-									currentProcess=0;
+								if(currentProcess == processListSize){
+									currentProcess = 0;
 								}
 							}
 				break;
-				
-				default:cout<<"Make a good choice";
-				break;
+			}
+				default:
+					cout<<"Make a good choice 1 - 5";
+					break;
 			}
 			break;
-			
-			case 2 : 
-			{
-				int nonPreemptiveSchedulingType;
-				cout<<"Choose Between the five Scheduling Non Preemptinve Type \n";
+	}
+	
+			case 2 : {
+				int preemptiveSchedulingType;
+				cout<<"Choose Between the five Scheduling Preemptinve Type \n";
 				cout<<"1. None\n";
 				cout<<"2. First Come, First Served Scheduling\n";
 				cout<<"3. Shortest-Job-First Scheduling\n";
 				cout<<"4. Priority Scheduling\n";
-				cin>>nonPreemptiveSchedulingType;
-				switch(nonPreemptiveSchedulingType){
+				cin>>PreemptiveSchedulingType;
+				switch(PreemptiveSchedulingType){
 					case 1:
 						cout<<"None Scheduling method choosen try again \n";
 			break;
@@ -295,23 +356,25 @@ int main (int argc, char *argv[]){
 						
 							bool checkEnd=true;
 	                        int time=0;
-	                        cout<<"schedulingNonPreemptive start\n";
-	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
+	                        cout<<"schedulingPreemptive start\n";
 	                        while(checkEnd==true){
-	                        	cout << "in while Preemp\n";
-		                    	int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
-			  					if(processesToExecute==-1){
+	                        	cout << "in while\n";
+	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
+	                        
+	                        	
+		                    	int processesToExecute = processChoiceSelection(allProcesses, 1, lineNbre);
+			  					if(processesToExecute == -1){
+									cout << "no process to execute\n";
 									checkEnd=false;
 								}
 								else{
-									while(allProcesses.front().exectution_end==0){
 										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+										
 									}
 									
 								}
-							}
+							
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
@@ -324,22 +387,22 @@ int main (int argc, char *argv[]){
 						
 						bool checkEnd=true;
 	                        int time=0;
-	                        cout<<"schedulingNonPreemptive start\n";
-	                        allProcesses = addProcessToQ (allProcesses, time,lineNbre);
+	                        cout<<"schedulingPreemptive start\n";
 	                        while(checkEnd==true){
+	                        allProcesses = addProcessToQ (allProcesses, time,lineNbre);
+	                        
 		                    	int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
 			  					if(processesToExecute==-1){
 									checkEnd=false;
 								}
 								else{
-									while(allProcesses.front().exectution_end==0){
 										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+										
 									}
 									
 								}
-							}
+							
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
@@ -349,23 +412,23 @@ int main (int argc, char *argv[]){
 						cout<<"Priority Scheduling\n";
 						
 						bool checkEnd=true;
-	                        int time=0;
-	                        cout<<"schedulingNonPreemptive start\n";
-	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
+	                        int time = 0;
+	                        cout<<"schedulingPreemptive start\n";
 	                        while(checkEnd==true){
-		                    	int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
-			  					if(processesToExecute==-1){
-									checkEnd=false;
+	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
+	                        
+		                    	int processesToExecute = processChoiceSelection(allProcesses, 2, lineNbre);
+			  					if(processesToExecute == -1){
+									checkEnd = false;
 								}
 								else{
-									while(allProcesses.front().exectution_end==0){
 										allProcesses = processExecution(allProcesses, processesToExecute, lineNbre);
 										time++;
-										allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+										
 									}
 									
 								}
-							}
+							
 						cout<<"Scheduling Finish\n";
 						cout<<time<<"time\n";
 						break;
@@ -375,7 +438,7 @@ int main (int argc, char *argv[]){
 					break;
 				}
 				
-			}	
+				
 			break;				
 						
 		}
@@ -400,9 +463,8 @@ int main (int argc, char *argv[]){
 		}
 		
 			case 4 : {
-			cout<<"Exit the program";
 			cout<<"Exit Program, Thank you  \n";
-				float averages;
+				double averages;
 					int sum=0;
                 	for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
                     sum = sum + it->execution_time;
@@ -425,7 +487,7 @@ int main (int argc, char *argv[]){
 					
 				
 			break;
-			// return 0;
+			return 0;
 			}
 			
 			default : 
@@ -436,4 +498,4 @@ int main (int argc, char *argv[]){
 			
 		}
 	}
-
+}
