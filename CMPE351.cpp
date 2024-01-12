@@ -480,19 +480,17 @@ int main(int argc, char *argv[]) {
                 
                 for (auto itInfo = resultInfo.begin(); itInfo !=resultInfo.end(); itInfo++){
 
-			cout << itInfo->methodName<<endl;
-			file << itInfo->methodName<<endl;	
+			cout << itInfo->methodName<<endl;	
 			list<processData> processesInfo = itInfo->processesInfo;
 			
 			cout << "Processes waiting Time \n";
 			file << "Processes waiting Time \n";
 			for (auto it = processesInfo.begin(); it != processesInfo.end(); ++it) {
-				int pdistance = distance(processesInfo.begin(), it) + 1;
-                    		cout << "P" << pdistance << ": " << it->execution_time << "ms \n";
-                    		file << "P" << pdistance + 1 << ": " << it->execution_time << "ms \n";
+                    		cout << "P" << distance(processesInfo.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
+                    		file << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
                 	}
 			cout << "Average :" << itInfo->averageTime << "ms \n";
-			file << "Average :" << itInfo->averageTime << "ms \n";
+			file << "Average :" << averages << "ms \n";
 		}
 		file << " \n";
 		file.close();
@@ -500,8 +498,9 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
             default:
-                cout << "Select one of this ";
+                cout << "Select one of this"<<endl;
                 break;
-        }
-    }
+        }
+    }
+    return 0;
 }
