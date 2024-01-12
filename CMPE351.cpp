@@ -17,7 +17,11 @@ struct processData {
 	int in_queue;
 	int position;
 };
-
+struct resultData{
+	string methodName;
+	list<processData> processesInfo;
+	double averageTime;
+};
 
 list<processData> addProcessToQ(list<processData> scProcesses, int etime, int nbreline) {
     list<processData> scNewProcesses{};
@@ -92,7 +96,7 @@ char *file_output=nullptr;
 int main (int argc, char *argv[]){
     int file_count;
 
-	if(argc<2){
+	if(argc < 2){
 		cout<<"You should introduce 2 arguments";
 		exit(0);
 	}
@@ -117,6 +121,7 @@ int main (int argc, char *argv[]){
 	
 	int lineNbre=0;
 	int p=0;
+	list<resultData> resultInfo{};
 	list<processData> fileData{};
 
 	ifstream file(file_input);
@@ -155,15 +160,18 @@ int main (int argc, char *argv[]){
 		cin>>Select;
 		
 		switch (Select){
-			case 1 : int selectScheduling;
-			cout<<"Choose the method" <<endl;
-			cout<<"1. None method Scheduling" <<endl;
-			cout<<"2. First came , First served Scheduling" <<endl;
-			cout<<"3. Short Test Job First Scheduling" <<endl;
-			cout<<"4. Priority Scheduling" <<endl;
-			cout<<"5. Round Robin" << endl;
-			cout<<"Option > " <<endl;
-			cin>>selectScheduling;
+			
+			case 1 :{
+			 int selectScheduling;
+				cout<<"Choose the method" <<endl;
+				cout<<"1. None method Scheduling" <<endl;
+				cout<<"2. First came , First served Scheduling" <<endl;
+				cout<<"3. Short Test Job First Scheduling" <<endl;
+				cout<<"4. Priority Scheduling" <<endl;
+				cout<<"5. Round Robin" << endl;
+				cout<<"Option > " <<endl;
+				cin>>selectScheduling;
+				string processName;
 			
 			switch (selectScheduling){
 				case 1 :
@@ -174,8 +182,9 @@ int main (int argc, char *argv[]){
 				cout<<"First Come , First Served Scheduling\n";
 				bool checkEnd=true;
 						int time=0;
-						cout<<"schedulingPreemptive start\n";
+						cout<<"schedulingNonPreemptive start\n";
 						allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+						processName = "First Come, First Served Scheduling : schedulingNonPreemptive start";
 							while (checkEnd == true){
 								cout <<"in while non Preemp"\n;							
 								int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
@@ -212,9 +221,10 @@ int main (int argc, char *argv[]){
 				cout<<"Shortest-Job-First Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
-						cout<<"schedulingPreemptive start\n";
-							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
-							while(checkEnd==true){
+						cout<<"schedulingNonPreemptive start\n";
+						processName = "Shortest-Job-First Scheduling : schedulingNonPreemptive start";
+						allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+						while(checkEnd==true){
 							int processesToExecute=processChoiceSelection(allProcesses, 0, lineNbre);
 							if(processesToExecute == -1){
 								checkEnd=false;
@@ -240,8 +250,8 @@ int main (int argc, char *argv[]){
 						}
 					}
 				}
-						cout<<"Scheduling Finish\n";
-						cout<<time<<"time\n";  
+				cout<<"Scheduling Finish\n";
+				cout<<time<<"time\n";  
 				break;
 			}
 			
@@ -249,9 +259,10 @@ int main (int argc, char *argv[]){
 				cout<<"Priority Scheduling\n";
 						bool checkEnd=true;
 						int time=0;
-						cout<<"schedulingPreemptive start\n";
-							allProcesses = addProcessToQ(allProcesses, time, lineNbre);
-							while(checkEnd == true){
+						cout<<"schedulingNonPreemptive start\n";
+						processName = "Priority Scheduling : schedulingNonPreemptive start";
+						allProcesses = addProcessToQ(allProcesses, time, lineNbre);
+						while(checkEnd == true){
 							int processesToExecute=processChoiceSelection(allProcesses, 2, lineNbre);
 							if(processesToExecute==-1){
 								checkEnd=false;
@@ -290,6 +301,7 @@ int main (int argc, char *argv[]){
 						cin>>quantum;
 							bool checkEnd=true;
 							int time = 0;
+							processName = "Round-Robin Scheduling";
 							cout<<"schedulingRoundRobin start\n";
 							allProcesses = addProcessToQ(pProcesses, time, lineNbre);
 							int processListSize=lineNbre;
@@ -297,6 +309,7 @@ int main (int argc, char *argv[]){
 							int processesToExecute = processChoiceSelection(allProcesses, 1, lineNbre);
 							while(checkEnd==true){
 								cout <<"Round Robin start\n";
+								
 								for(int i=0; i<quantum; i++){
 									int processesToExecute=processChoiceSelection(allProcesses, 1, lineNbre);
 								
@@ -336,8 +349,27 @@ int main (int argc, char *argv[]){
 					cout<<"Make a good choice 1 - 5";
 					break;
 			}
-			break;
-	}
+			cout << "The Result is:\n";
+                cout << processName<<endl;
+                float average;
+                int sum = 0;
+                for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    sum = sum + it->execution_time;
+                }
+                average = (sum / lineNbre);
+
+                for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    cout << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
+                }
+
+               cout << "Average :" << average << "ms \n";
+               resultData infoOfProcess = {processName, allProcesses, average};
+               resultInfo.push_back(infoOfProcess);
+               allProcesses= fileData;
+                break;
+            }
+	
+	
 	
 			case 2 : {
 				int preemptiveSchedulingType;
@@ -347,6 +379,7 @@ int main (int argc, char *argv[]){
 				cout<<"3. Shortest-Job-First Scheduling\n";
 				cout<<"4. Priority Scheduling\n";
 				cin>>PreemptiveSchedulingType;
+				string processName;
 				switch(PreemptiveSchedulingType){
 					case 1:
 						cout<<"None Scheduling method choosen try again \n";
@@ -357,6 +390,7 @@ int main (int argc, char *argv[]){
 							bool checkEnd=true;
 	                        int time=0;
 	                        cout<<"schedulingPreemptive start\n";
+	                        processName = "First Come, First Served Scheduling : schedulingPreemptive start";
 	                        while(checkEnd==true){
 	                        	cout << "in while\n";
 	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
@@ -388,6 +422,7 @@ int main (int argc, char *argv[]){
 						bool checkEnd=true;
 	                        int time=0;
 	                        cout<<"schedulingPreemptive start\n";
+	                        processName = "Shortest-Job-First Scheduling : schedulingPreemptive start";
 	                        while(checkEnd==true){
 	                        allProcesses = addProcessToQ (allProcesses, time,lineNbre);
 	                        
@@ -414,6 +449,7 @@ int main (int argc, char *argv[]){
 						bool checkEnd=true;
 	                        int time = 0;
 	                        cout<<"schedulingPreemptive start\n";
+	                        processName = "Priority Scheduling : schedulingPreemptive start";
 	                        while(checkEnd==true){
 	                        allProcesses = addProcessToQ(allProcesses, time,lineNbre);
 	                        
@@ -439,55 +475,71 @@ int main (int argc, char *argv[]){
 				}
 				
 				
-			break;				
+                cout << "The Result is:\n";
+                cout << processName<<endl;
+                float average;
+                int sum = 0;
+                for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    sum = sum + it->execution_time;
+                }
+                average = (sum / lineNbre);
+
+                for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
+                    cout << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
+                }
+
+               cout << "Average :" << average << "ms \n";
+               resultData infoOfProcess = {processName, allProcesses, average};
+               resultInfo.push_back(infoOfProcess);
+               allProcesses= fileData;
+                break;	
 						
 		}
 		
-	}
-			case 3 : 
+	
+			case 3 : {
+			
 			cout<<"The Result is:\n";
-				cout<<"Processes waiting Time \n";
-				float average;
-					int sum=0;
-                	for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
-                    sum = sum + it->execution_time;
-	                }
-	            average = (sum/lineNbre);
+				for (auto itInfo = resultInfo.begin(); itInfo !=resultInfo.end(); itInfo++){
 
-	           for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
-                    cout << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
-	            }
-	            
-				cout<<"Average :"<<average<<"ms \n"; 
-			break;
+			cout << itInfo->methodName<<endl;	
+			list<processData> processesInfo = itInfo->processesInfo;
+			
+			for (auto it = processesInfo.begin(); it != processesInfo.end(); ++it) {
+                    		cout << "P" << distance(processesInfo.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
+                	}
+			cout << "Average :" << itInfo->averageTime << "ms \n";
+		}
+               
+                break;
+           
 		}
 		
 			case 4 : {
 			cout<<"Exit Program, Thank you  \n";
-				double averages;
-					int sum=0;
-                	for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
-                    sum = sum + it->execution_time;
-	                }
-	            averages = (sum/lineNbre);
+			 ofstream file;
+                file.open(file_output);
+                
+                for (auto itInfo = resultInfo.begin(); itInfo !=resultInfo.end(); itInfo++){
+
+			cout << itInfo->methodName<<endl;
+			file << itInfo->methodName<<endl;	
+			list<processData> processesInfo = itInfo->processesInfo;
+			
+			cout << "Processes waiting Time \n";
+			file << "Processes waiting Time \n";
+			for (auto it = processesInfo.begin(); it != processesInfo.end(); ++it) {
+				int pdistance = distance(processesInfo.begin(), it) + 1;
+                    		cout << "P" << pdistance << ": " << it->execution_time << "ms \n";
+                    		file << "P" << pdistance + 1 << ": " << it->execution_time << "ms \n";
+                	}
+			cout << "Average :" << itInfo->averageTime << "ms \n";
+			file << "Average :" << itInfo->averageTime << "ms \n";
+		}
+		file << " \n";
+		file.close();
 		
-				ofstream file;
-				file.open(file_output);
-									  
-				file<<"Processes waiting Time \n";
-				 for (auto it = allProcesses.begin(); it != allProcesses.end(); ++it) {
-                    file << "P" << distance(allProcesses.begin(), it) + 1 << ": " << it->execution_time << "ms \n";
-                }
-
-				file<<"Average :"<< averages <<"ms \n";
-
-						
-				file.close();	
-				 	
-					
-				
-			break;
-			return 0;
+                return 0;
 			}
 			
 			default : 
@@ -499,3 +551,4 @@ int main (int argc, char *argv[]){
 		}
 	}
 }
+
