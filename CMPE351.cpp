@@ -500,7 +500,7 @@ int main(int argc, char *argv[]) {
             default:
                 cout << "Select one of this"<<endl;
                 break;
-        }
+    }
     }
     return 0;
 }
